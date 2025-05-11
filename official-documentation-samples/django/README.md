@@ -284,4 +284,3 @@ In this section, you set up the database connection for Django.
 * [Docker Compose Command line reference](https://docs.docker.com/compose/reference/)
 * [Compose file reference](https://docs.docker.com/compose/compose-file/)
 * [Awesome Compose Django sample application](../../django/README.md)
-* Hello
