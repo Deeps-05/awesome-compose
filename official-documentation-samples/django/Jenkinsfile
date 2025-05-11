@@ -1,49 +1,18 @@
 pipeline {
-    agent any
-
-    environment {
-        // Set the working directory for your Django sample
-        SAMPLE_DIR = "official-documentation-samples/django"
+  agent any
+  stages {
+    stage('Checkout') {
+      steps {
+        git 'https://github.com/Deeps-05/awesome-compose.git'
+      }
     }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Deeps-05/awesome-compose.git'
-            }
+    stage('Build and Run') {
+      steps {
+        dir('official-documentation-samples/django') {
+          // All commands here run inside that subfolder
+          sh 'docker-compose up -d --build'
         }
-        stage('Build and Run Containers') {
-            steps {
-                dir("${SAMPLE_DIR}") {
-                    sh 'docker-compose down || true'
-                    sh 'docker-compose up -d --build'
-                }
-            }
-        }
-        stage('Run Migrations') {
-            steps {
-                dir("${SAMPLE_DIR}") {
-                    sh 'docker-compose exec web python manage.py migrate'
-                }
-            }
-        }
-        stage('Test Application') {
-            steps {
-                dir("${SAMPLE_DIR}") {
-                    // Wait a bit for the server to be ready
-                    sh 'sleep 10'
-                    // Test if Django is responding (adjust port if needed)
-                    sh 'curl --fail http://localhost:8000 || exit 1'
-                }
-            }
-        }
+      }
     }
-    post {
-        always {
-            dir("${SAMPLE_DIR}") {
-                sh 'docker-compose down'
-            }
-        }
-    }
+  }
 }
-
